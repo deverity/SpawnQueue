@@ -1,12 +1,12 @@
 {
-    "name": "lsl/spawn-queue",
+    "name": "deverity/spawn-queue",
     "description": "A robust CakePHP queue engine with per-job process isolation, atomic claiming, graceful shutdown and dereuromark/cakephp-queue table compatibility.",
     "type": "cakephp-plugin",
     "license": "MIT",
     "keywords": ["cakephp", "queue", "worker", "process", "isolation", "fork"],
     "authors": [
         {
-            "name": "LSL",
+            "name": "deverity",
             "role": "Developer"
         }
     ],

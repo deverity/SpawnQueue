@@ -6,7 +6,7 @@ Atomic DB claiming via `SELECT … FOR UPDATE SKIP LOCKED` (MySQL 8+ / MariaDB 1
 ## Requirements
 
 - PHP 8.1+, CakePHP ^4.5, MySQL 8.0+ or MariaDB 10.6+
-- Composer package: `lsl/spawn-queue`
+- Composer package: `deverity/spawn-queue`
 - Plugin class: `SpawnQueue\SpawnQueuePlugin`
 
 ## Source Layout

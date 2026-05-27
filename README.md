@@ -25,7 +25,7 @@ A robust queue engine for CakePHP 4 that runs **each job in its own isolated pro
 ### Via Composer
 
 ```bash
-composer require lsl/spawn-queue
+composer require deverity/spawn-queue
 ```
 
 Load the plugin in `src/Application.php`:
