@@ -279,7 +279,9 @@ class ChildProcessManager
 
         $err = stream_get_contents($child->pipes[2]);
         if ($err !== '' && $err !== false) {
-            fwrite(STDERR, $err);
+            if (TuiLogger::logsEnabled()) {
+                fwrite(STDERR, $err);
+            }
         }
     }
 

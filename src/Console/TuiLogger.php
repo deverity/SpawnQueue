@@ -655,9 +655,11 @@ class TuiLogger
         }
 
         // ── wide vs narrow: fixed visible chars (excluding task column) ─
-        // 2 + 5 + 2 + 12 + 2 + len(times) + 2 + len(att) + 1
-        $fixedWide = 24 + strlen($timesWide) + strlen($attPart);
-        $taskWidth = $w - $fixedWide; // >= 4 → show task name
+        // 2 + jobPartWidth + 2 + 12 + 2 + [task] + 2 + len(times) + 2 + len(att) + 1
+        // Use mb_strlen for timesWide/attPart: they contain multi-byte chars (→, —).
+        $jobPartWidth = strlen($jobPart); // ASCII-only, strlen == visible width
+        $fixedWide    = 23 + $jobPartWidth + mb_strlen($timesWide, 'UTF-8') + mb_strlen($attPart, 'UTF-8');
+        $taskWidth    = $w - $fixedWide; // >= 4 → show task name
 
         // ── no-color path ─────────────────────────────────────────────
         if (!$color) {
