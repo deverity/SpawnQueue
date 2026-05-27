@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SpawnQueue\Service;
 
 use Cake\Core\Configure;
+use Cake\Database\Connection;
 use Cake\Datasource\ConnectionManager;
 use InvalidArgumentException;
 use SpawnQueue\Handler\JobHandlerInterface;
@@ -80,6 +81,7 @@ class QueueService
             $connection
         );
 
+        /** @var Connection $conn */
         $conn = ConnectionManager::get($connection);
         $now = date('Y-m-d H:i:s');
         $config = Configure::read('SpawnQueue') ?? [];
@@ -104,7 +106,7 @@ class QueueService
 
         $conn->insert('queued_jobs', $data);
 
-        return (int) $conn->lastInsertId();
+        return (int) $conn->getDriver()->lastInsertId();
     }
 
     /**
