@@ -270,9 +270,11 @@ class ChildProcessManager
     {
         $out = stream_get_contents($child->pipes[1]);
         if ($out !== '' && $out !== false) {
-            echo $out;
-            // Keep TuiLogger's line counter in sync so redraw cursor math stays correct.
-            TuiLogger::addLogLines(substr_count($out, "\n"));
+            if (TuiLogger::logsEnabled()) {
+                echo $out;
+                // Keep TuiLogger's line counter in sync so redraw cursor math stays correct.
+                TuiLogger::addLogLines(substr_count($out, "\n"));
+            }
         }
 
         $err = stream_get_contents($child->pipes[2]);

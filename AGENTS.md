@@ -112,6 +112,7 @@ All under `Configure::read('SpawnQueue')`:
 | process_stale_timeout      | int   | 120     | Seconds without heartbeat = stale coordinator   |
 | default_timeout            | int   | 120     | Per-job execution timeout (no queue override)   |
 | default_max_attempts       | int   | 5       | Max retries (no queue override)                 |
+| show_type                  | string| `lines` | Terminal output mode: `lines` (logs only) or `tui` (live dashboard only) |
 | task_map                   | array | —       | `['Queue.Email' => EmailJobHandler::class, …]`  |
 | queues                     | array | —       | Per-queue overrides (see below)                 |
 
@@ -211,8 +212,8 @@ Manual: cancelled
 
 | Command                   | Purpose                                                   |
 |---------------------------|-----------------------------------------------------------|
-| `queue:work <queue>`      | Start coordinator (`--max-workers=N`, `--timeout=N`)      |
-| `queue:work-all`          | Start SuperCoordinator for all `SpawnQueue.queues`        |
+| `queue:work <queue>`      | Start coordinator (`--max-workers=N`, `--timeout=N`, `--show=lines\|tui`) |
+| `queue:work-all`          | Start SuperCoordinator for all `SpawnQueue.queues` (`--show=lines\|tui`) |
 | `queue:run-job`           | Internal — coordinator calls this per job (`--job-id=N`) |
 | `queue:stats`             | Job counts by queue/status (`--queue=name`)               |
 | `queue:requeue-stuck`     | Recover stuck processing jobs (`--queue`, `--timeout`)    |

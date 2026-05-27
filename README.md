@@ -72,6 +72,7 @@ Configure::write('SpawnQueue', [
     'default_timeout'      => 120,     // per-job execution timeout (seconds)
     'default_max_attempts' => 5,
     'connection'           => 'default', // CakePHP connection name for all queue DB operations
+    'show_type'            => 'lines', // terminal output: 'lines' (log lines only) or 'tui' (live dashboard only)
 
     'queues' => [
         'default' => ['max_workers' => 3,  'timeout' => 120,  'max_attempts' => 5],
@@ -238,13 +239,35 @@ has heavy traffic, long-running jobs, or different restart/deploy needs.
 
 | Command | Description |
 |---|---|
-| `queue:work <queue>` | Start coordinator (`--max-workers=N`, `--timeout=N`) |
-| `queue:work-all` | Start one SuperCoordinator for all configured queues |
+| `queue:work <queue>` | Start coordinator (`--max-workers=N`, `--timeout=N`, `--show=lines\|tui`) |
+| `queue:work-all` | Start one SuperCoordinator for all configured queues (`--show=lines\|tui`) |
 | `queue:run-job --job-id=N` | Run one job (internal — called by coordinator) |
 | `queue:stats [--queue=name]` | Job counts by queue and status |
 | `queue:requeue-stuck` | Recover jobs stuck in `processing` (`--queue`, `--timeout`) |
 | `queue:retry-failed` | Re-queue `failed`/`dead` jobs (`--queue`, `--status`, `--limit`) |
 | `queue:cleanup` | Delete old terminal jobs (`--days=30`, `--status`) |
+
+---
+
+## Terminal Output Modes
+
+Controlled by `SpawnQueue.show_type` config or the `--show` CLI option:
+
+| Mode | Output |
+|---|---|
+| `lines` (default) | Scrolling log lines only — safe for log files and Supervisor |
+| `tui` | Live htop-like dashboard only — useful for interactive monitoring |
+
+```bash
+# Interactive monitoring session
+php bin/cake queue:work-all --show=tui
+
+# Or set permanently in config
+Configure::write('SpawnQueue.show_type', 'tui');
+```
+
+> **Note:** In `tui` mode the log lines from child processes are suppressed.
+> The dashboard refreshes in-place — do not redirect stdout to a file in this mode.
 
 ---
 

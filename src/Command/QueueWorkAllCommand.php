@@ -9,6 +9,7 @@ use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
+use SpawnQueue\Console\TuiLogger;
 use SpawnQueue\Coordinator\SuperCoordinator;
 use SpawnQueue\ValueObject\QueueConfig;
 
@@ -43,13 +44,20 @@ class QueueWorkAllCommand extends Command
 
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        return $parser->setDescription(
-            'Start a SuperCoordinator that manages all configured queues in a single process.'
-        );
+        return $parser
+            ->setDescription('Start a SuperCoordinator that manages all configured queues in a single process.')
+            ->addOption('show', [
+                'help'    => 'Output mode: lines (log lines only, default) or tui (live dashboard only). Overrides SpawnQueue.show_type config.',
+                'default' => null,
+                'choices' => ['lines', 'tui'],
+            ]);
     }
 
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
+        $showType = $args->getOption('show') ?? Configure::read('SpawnQueue.show_type') ?? 'lines';
+        TuiLogger::setShowType((string) $showType);
+
         $queues = $this->resolveQueueNames();
 
         $configs = array_map(
