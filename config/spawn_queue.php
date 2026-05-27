@@ -48,6 +48,12 @@ return [
         // or when the coordinator is shutting down and children don't exit cleanly.
         'sigterm_grace_period' => 5,
 
+        // Terminal output mode.
+        //   'lines' — scrolling log lines only, no dashboard (default)
+        //   'tui'   — live dashboard only, log lines suppressed (htop-like)
+        // Can also be set per-run with the --show option on queue:work / queue:work-all.
+        'show_type' => 'lines',
+
         // Map legacy task strings to handler class names.
         // Keys are the exact strings stored in queued_jobs.job_task.
         // Add entries to override or extend the default mapping.

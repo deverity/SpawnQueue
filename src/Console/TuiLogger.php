@@ -91,10 +91,11 @@ class TuiLogger
     // -------------------------------------------------------------------------
     // Live dashboard state
     // -------------------------------------------------------------------------
-    private static ?bool $colorEnabled         = null;
-    private static bool  $dashboardReady       = false;
-    private static int   $dynamicSectionHeight = 0;
-    private static int   $linesAfterBanner     = 0;
+    private static ?bool  $colorEnabled         = null;
+    private static string $showType             = 'lines';
+    private static bool   $dashboardReady       = false;
+    private static int    $dynamicSectionHeight = 0;
+    private static int    $linesAfterBanner     = 0;
 
     /**
      * @var array<string, array{maxWorkers:int, timeout:int, workerRows:int,
@@ -147,6 +148,22 @@ class TuiLogger
         self::emit(self::c(self::MAGENTA) . '[runner]' . self::c(self::RESET), $message);
     }
 
+    /**
+     * Set the output mode before initDashboard() is called.
+     *   'lines' — scrolling logs only, no dashboard (default)
+     *   'tui'   — live dashboard only, logs suppressed (htop-like)
+     */
+    public static function setShowType(string $type): void
+    {
+        self::$showType = $type === 'tui' ? 'tui' : 'lines';
+    }
+
+    /** Returns false when log lines should be suppressed (show_type = tui). */
+    public static function logsEnabled(): bool
+    {
+        return self::$showType !== 'tui';
+    }
+
     public static function addLogLines(int $count): void
     {
         self::$linesAfterBanner += $count;
@@ -178,6 +195,16 @@ class TuiLogger
         }
 
         self::computeDynamicHeight();
+
+        if (self::$showType === 'lines') {
+            $pid   = getmypid();
+            $label = count($configs) === 1 ? 'Coordinator' : 'All Queues';
+            echo PHP_EOL . "  SpawnQueue  >>  {$label}  PID: {$pid}" . PHP_EOL . PHP_EOL;
+            self::$dashboardReady   = false;
+            self::$linesAfterBanner = 0;
+            return;
+        }
+
         self::printBanner($configs);
 
         self::$dashboardReady   = self::isColorEnabled();
@@ -572,7 +599,6 @@ class TuiLogger
         }
 
         $pendingCount = count($allPending);
-        $recentCount  = max(0, self::MAX_PANEL_ROWS - $pendingCount);
 
         for ($i = 0; $i < self::MAX_PANEL_ROWS; $i++) {
             if ($i < $pendingCount) {
@@ -760,6 +786,10 @@ class TuiLogger
 
     private static function emit(string $context, string $message): void
     {
+        if (self::$showType === 'tui') {
+            return;
+        }
+
         $ts = date('Y-m-d H:i:s');
         echo self::c(self::GRAY) . "[{$ts}]" . self::c(self::RESET)
             . ' ' . $context

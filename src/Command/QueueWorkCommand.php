@@ -8,6 +8,8 @@ use Cake\Command\Command;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
+use Cake\Core\Configure;
+use SpawnQueue\Console\TuiLogger;
 use SpawnQueue\Coordinator\QueueCoordinator;
 use SpawnQueue\ValueObject\QueueConfig;
 
@@ -49,6 +51,11 @@ class QueueWorkCommand extends Command
             ->addOption('timeout', [
                 'help'    => 'Per-job timeout in seconds. Overrides config.',
                 'default' => null,
+            ])
+            ->addOption('show', [
+                'help'    => 'Output mode: lines (log lines only, default) or tui (live dashboard only). Overrides SpawnQueue.show_type config.',
+                'default' => null,
+                'choices' => ['lines', 'tui'],
             ]);
     }
 
@@ -68,6 +75,9 @@ class QueueWorkCommand extends Command
         if ($args->getOption('timeout') !== null) {
             $config = $config->with(['timeout' => (int) $args->getOption('timeout')]);
         }
+
+        $showType = $args->getOption('show') ?? Configure::read('SpawnQueue.show_type') ?? 'lines';
+        TuiLogger::setShowType((string) $showType);
 
         $coordinator = new QueueCoordinator($config);
         $coordinator->run();
