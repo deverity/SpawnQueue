@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+    bootstrap="tests/bootstrap.php"
+    colors="true"
+    stopOnFailure="false"
+    processIsolation="false"
+>
+    <testsuites>
+        <testsuite name="unit">
+            <directory>tests/TestCase</directory>
+            <exclude>tests/TestCase/Coordinator/JobClaimerIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Coordinator/StuckJobResolverIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Coordinator/ChildProcessManagerIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Coordinator/FailedJobReviverIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Coordinator/CoordinatorProcessRegistryIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Command/QueueStatsCommandIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Command/QueueCleanupCommandIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Command/QueueRetryFailedCommandIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Command/QueueRequeueStuckCommandIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Service/QueueServiceIntegrationTest.php</exclude>
+            <exclude>tests/TestCase/Worker/JobRunnerIntegrationTest.php</exclude>
+        </testsuite>
+        <testsuite name="integration">
+            <file>tests/TestCase/Coordinator/JobClaimerIntegrationTest.php</file>
+            <file>tests/TestCase/Coordinator/StuckJobResolverIntegrationTest.php</file>
+            <file>tests/TestCase/Coordinator/ChildProcessManagerIntegrationTest.php</file>
+            <file>tests/TestCase/Coordinator/FailedJobReviverIntegrationTest.php</file>
+            <file>tests/TestCase/Coordinator/CoordinatorProcessRegistryIntegrationTest.php</file>
+            <file>tests/TestCase/Command/QueueStatsCommandIntegrationTest.php</file>
+            <file>tests/TestCase/Command/QueueCleanupCommandIntegrationTest.php</file>
+            <file>tests/TestCase/Command/QueueRetryFailedCommandIntegrationTest.php</file>
+            <file>tests/TestCase/Command/QueueRequeueStuckCommandIntegrationTest.php</file>
+            <file>tests/TestCase/Service/QueueServiceIntegrationTest.php</file>
+            <file>tests/TestCase/Worker/JobRunnerIntegrationTest.php</file>
+        </testsuite>
+        <testsuite name="all">
+            <directory>tests/TestCase</directory>
+        </testsuite>
+    </testsuites>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <exclude>
+            <file>src/SpawnQueuePlugin.php</file>
+        </exclude>
+    </coverage>
+</phpunit>

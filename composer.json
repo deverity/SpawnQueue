@@ -1,0 +1,34 @@
+{
+    "name": "lsl/spawn-queue",
+    "description": "A robust CakePHP queue engine with per-job process isolation, atomic claiming, graceful shutdown and dereuromark/cakephp-queue table compatibility.",
+    "type": "cakephp-plugin",
+    "license": "MIT",
+    "keywords": ["cakephp", "queue", "worker", "process", "isolation", "fork"],
+    "authors": [
+        {
+            "name": "LSL",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "cakephp/cakephp": "^4.5"
+    },
+    "require-dev": {
+        "cakephp/cakephp-codesniffer": "^5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "SpawnQueue\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SpawnQueue\\Test\\": "tests/"
+        }
+    },
+    "extra": {
+        "installer-name": "SpawnQueue"
+    },
+    "minimum-stability": "stable"
+}
