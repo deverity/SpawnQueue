@@ -68,6 +68,7 @@ class SpawnQueueSchema extends AbstractMigration
         $existingColumns = $this->getExistingColumns('queued_jobs');
         $table           = $this->table('queued_jobs');
         $changed         = false;
+        $legacyMaxAttempts = $this->detectLegacyMaxAttempts();
 
         if (!in_array('queue', $existingColumns, true)) {
             $table->addColumn('queue', 'string', [
@@ -82,7 +83,7 @@ class SpawnQueueSchema extends AbstractMigration
         if (!in_array('max_attempts', $existingColumns, true)) {
             $table->addColumn('max_attempts', 'integer', [
                 'null'    => false,
-                'default' => 5,
+                'default' => $legacyMaxAttempts,
                 'comment' => 'SpawnQueue max retry attempts for this job',
             ]);
             $changed = true;
@@ -168,6 +169,15 @@ class SpawnQueueSchema extends AbstractMigration
             ->addIndex(['status'])
             ->addIndex(['workerkey'])
             ->create();
+    }
+
+    /** Infer the retry ceiling used by legacy rows before adding max_attempts. */
+    private function detectLegacyMaxAttempts(): int
+    {
+        $rows = $this->fetchAll('SELECT MAX(failed) AS max_failed FROM queued_jobs');
+        $maxFailed = (int) ($rows[0]['max_failed'] ?? 0);
+
+        return $maxFailed > 0 ? $maxFailed : 5;
     }
 
     /** Returns an array of existing column names for a table. */
