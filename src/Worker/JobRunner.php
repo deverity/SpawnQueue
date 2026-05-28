@@ -62,6 +62,17 @@ class JobRunner
             $job->maxAttempts
         ));
 
+        $warningMask = E_WARNING | E_USER_WARNING | E_CORE_WARNING | E_COMPILE_WARNING;
+        set_error_handler(static function (int $errno, string $errstr, string $errfile, int $errline) use ($warningMask): bool {
+            if (!(error_reporting() & $errno)) {
+                return false;
+            }
+            if ($errno & $warningMask) {
+                throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+            }
+            return false;
+        });
+
         try {
             $handler = $this->resolveHandler($job);
             $result = $handler->handle($job);
@@ -71,6 +82,8 @@ class JobRunner
             $result = JobResult::retry($e->getMessage(), $e->getRetryAfterSeconds());
         } catch (\Throwable $e) {
             $result = JobResult::retry(sprintf('[%s] %s', $e::class, $e->getMessage()));
+        } finally {
+            restore_error_handler();
         }
 
         $durationMs = (int) round((microtime(true) - $startedAt) * 1000);
