@@ -850,9 +850,10 @@ class TuiLogger
     private static function padTo(string $text, int $width): string
     {
         $visible = mb_strlen(self::stripAnsi($text), 'UTF-8');
-        return $visible >= $width
-            ? mb_substr($text, 0, $width, 'UTF-8')
-            : $text . str_repeat(' ', $width - $visible);
+        if ($visible >= $width) {
+            return $text;
+        }
+        return $text . str_repeat(' ', $width - $visible);
     }
 
     private static function stripAnsi(string $text): string
