@@ -223,6 +223,13 @@ class QueueServiceIntegrationTest extends TestCase
         $this->assertSame('default', $this->fetchJob($id)['queue']);
     }
 
+    public function testPushUnconfiguredQueueFallsToDefault(): void
+    {
+        $id = QueueService::push('legado', NewStyleHandler::class, [], connection: 'test');
+
+        $this->assertSame('default', $this->fetchJob($id)['queue']);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     private function fetchJob(int $id): array

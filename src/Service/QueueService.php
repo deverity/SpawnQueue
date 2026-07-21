@@ -16,8 +16,8 @@ use SpawnQueue\Handler\JobHandlerInterface;
  * New-style handlers declare their own queue through JobHandlerInterface::queue().
  * Legacy dereuromark/cakephp-queue tasks may still be enqueued with an explicit
  * queue, or without one. Legacy tasks without an explicit queue use "default".
- * Empty queue names and the literal string "undefined" are also normalized to
- * "default".
+ * Empty, "undefined", and unconfigured queue names are normalized to "default"
+ * so jobs cannot be stranded without a matching worker.
  *
  * Supported call forms:
  *
@@ -80,6 +80,8 @@ class QueueService
             $optionsOrConnection,
             $connection
         );
+
+        $queue = self::fallbackToDefaultWhenUnconfigured($queue);
 
         /** @var Connection $conn */
         $conn = ConnectionManager::get($connection);
@@ -233,6 +235,25 @@ class QueueService
         }
 
         return $queue;
+    }
+
+    /** Prevent jobs from being stranded in queues without a configured worker. */
+    private static function fallbackToDefaultWhenUnconfigured(string $queue): string
+    {
+        if ($queue === 'default') {
+            return $queue;
+        }
+
+        $queues = Configure::read('SpawnQueue.queues');
+        if (empty($queues) || !is_array($queues)) {
+            return 'default';
+        }
+
+        $configuredQueues = is_string(array_key_first($queues))
+            ? array_keys($queues)
+            : array_values($queues);
+
+        return in_array($queue, $configuredQueues, true) ? $queue : 'default';
     }
 
     /**
